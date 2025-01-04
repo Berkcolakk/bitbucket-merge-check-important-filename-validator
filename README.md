@@ -14,5 +14,5 @@ This Forge application automates pull request (PR) checks in a Bitbucket reposit
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/your-repo/forge-pr-check-app.git
+   git clone https://github.com/Berkcolakk/bitbucket-merge-check-important-filename-validator.git
    cd forge-pr-check-app
