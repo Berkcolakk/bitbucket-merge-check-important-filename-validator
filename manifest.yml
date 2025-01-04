@@ -1,0 +1,19 @@
+permissions:
+  scopes:
+    - read:repository:bitbucket
+    - read:pullrequest:bitbucket
+modules:
+  bitbucket:mergeCheck:
+    - key: filename-validator-merge-check-merge-check
+      function: main
+      name: filename-validator-merge-check
+      description: A Bitbucket merge check example
+      triggers:
+        - on-code-pushed
+  function:
+    - key: main
+      handler: index.run
+app:
+  runtime:
+        name: nodejs18.x
+  id: ari:cloud:ecosystem::app/75203a31-59e1-4ba7-95e5-b32eb0daf1a9
