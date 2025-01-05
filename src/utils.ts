@@ -7,22 +7,31 @@ const handleApiResponse = async (response) => {
   return response.json();
 };
 
-const fetchDiffStat = async (workspace, repoSlug, pullRequestId) => {
-  const url = route`/2.0/repositories/${workspace}/${repoSlug}/pullrequests/${pullRequestId}/diffstat`;
-  const response = await api.asApp().requestBitbucket(url, { method: 'GET' });
-  return handleApiResponse(response);
+const fetchDiffStat = async (workspaceId, repositoryId, pullRequestId) => {
+  try {
+    const url = route`/2.0/repositories/${workspaceId}/${repositoryId}/pullrequests/${pullRequestId}/diffstat`;
+    const response = await api.asApp().requestBitbucket(url, { method: 'GET' });
+    return handleApiResponse(response);
+  } catch (error) {
+    throw error;
+  }
 };
 
-export const getChangedFilesInPR = async (workspace, repoSlug, pullRequestId) => {
+export const getChangedFilesInPR = async (workspaceId, repositoryId, pullRequestId) => {
   try {
-    const diffStat = await fetchDiffStat(workspace, repoSlug, pullRequestId);
-
+    const diffStat = await fetchDiffStat(workspaceId, repositoryId, pullRequestId);
     return diffStat.values.map(file => file?.new?.path || file?.old?.path || '').filter(Boolean);
   } catch (error) {
     console.error('Error fetching changed files:', error);
     throw error;
   }
 };
-
-
-export const Data = ["Test.tsx", "Modal.tsx"];
+export const getPRDetails = async (workspaceId, repositoryId, pullRequestId) => {
+  try {
+    const url = route`/2.0/repositories/${workspaceId}/${repositoryId}/pullrequests/${pullRequestId}`;
+    const response = await api.asApp().requestBitbucket(url, { method: 'GET' });
+    return handleApiResponse(response);
+  } catch (error) {
+    throw error;
+  }
+}
