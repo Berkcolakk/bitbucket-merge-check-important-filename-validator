@@ -7,7 +7,7 @@ const handleApiResponse = async (response) => {
   return response.json();
 };
 
-const fetchDiffStat = async (workspaceId, repositoryId, pullRequestId) => {
+const fetchDiffStat = async (workspaceId: string, repositoryId: string, pullRequestId: number) => {
   try {
     const url = route`/2.0/repositories/${workspaceId}/${repositoryId}/pullrequests/${pullRequestId}/diffstat`;
     const response = await api.asApp().requestBitbucket(url, { method: 'GET' });
@@ -17,7 +17,7 @@ const fetchDiffStat = async (workspaceId, repositoryId, pullRequestId) => {
   }
 };
 
-export const getChangedFilesInPR = async (workspaceId, repositoryId, pullRequestId) => {
+export const getChangedFilesInPR = async (workspaceId: string, repositoryId: string, pullRequestId: number) => {
   try {
     const diffStat = await fetchDiffStat(workspaceId, repositoryId, pullRequestId);
     return diffStat.values.map(file => file?.new?.path || file?.old?.path || '').filter(Boolean);
@@ -26,7 +26,7 @@ export const getChangedFilesInPR = async (workspaceId, repositoryId, pullRequest
     throw error;
   }
 };
-export const getPRDetails = async (workspaceId, repositoryId, pullRequestId) => {
+export const getPRDetails = async (workspaceId: string, repositoryId: string, pullRequestId: number) => {
   try {
     const url = route`/2.0/repositories/${workspaceId}/${repositoryId}/pullrequests/${pullRequestId}`;
     const response = await api.asApp().requestBitbucket(url, { method: 'GET' });
