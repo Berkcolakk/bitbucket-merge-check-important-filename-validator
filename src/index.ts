@@ -1,7 +1,9 @@
 import { AppContext, } from '@forge/api';
 import { CheckResponse, PRCheckEvent } from './types';
-import { getChangedFilesInPR, getPRDetails } from './utils';
 import { Data } from './mockData';
+import { MIN_APPROVAL } from './common';
+import { changedFilesHasInvalid, getApprovalCount, getMessage } from './utils';
+import { getPRDetails } from './bitbucket';
 
 export const run = async (event: PRCheckEvent, _context: AppContext): Promise<CheckResponse> => {
   try {
@@ -9,23 +11,19 @@ export const run = async (event: PRCheckEvent, _context: AppContext): Promise<Ch
     const { uuid: repositoryId } = event.repository;
     const { id: pullRequestId } = event.pullrequest;
 
-    const changedFiles = await getChangedFilesInPR(workspaceId, repositoryId, pullRequestId);
 
-    const hasInvalidFile = changedFiles.some((file) => Data.includes(file));
+    const hasInvalidFile = await changedFilesHasInvalid(workspaceId, repositoryId, pullRequestId);
 
-    const prDetails = await getPRDetails(workspaceId, repositoryId, pullRequestId);
+    const approvalCount = await getApprovalCount(workspaceId, repositoryId, pullRequestId);
 
-    const approvers = prDetails.participants?.filter((participant: any) => participant.approved) || [];
-    const approvalCount = approvers.length;
+    const isSuccess = !hasInvalidFile || approvalCount >= MIN_APPROVAL;
 
-    const isSuccess = !hasInvalidFile || approvalCount >= 1;
+    const message = getMessage(isSuccess, approvalCount);
 
     return {
       success: isSuccess,
       message: JSON.stringify({
-        changedFiles,
-        invalidFiles: Data.filter((file) => changedFiles.includes(file)),
-        approvalCount,
+        message
       }),
     };
   } catch (error) {
