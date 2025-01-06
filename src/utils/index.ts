@@ -1,5 +1,6 @@
 import { fetchDiffStat, getPRDetails } from "../bitbucket";
 import { Data } from "../mockData";
+import { CheckResponse } from "../types";
 
 export const getChangedFilesInPR = async (workspaceId: string, repositoryId: string, pullRequestId: number) => {
     try {
@@ -43,5 +44,12 @@ export const getMessage = (isSuccess: boolean, approvalCount: number) => {
     return {
         message:"THANKS."
     }
-
 }
+export const handleError = (error: unknown): CheckResponse => {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+    return {
+      success: false,
+      message: JSON.stringify({ error: errorMessage }),
+    };
+  };
+  
